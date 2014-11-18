@@ -95,6 +95,7 @@ public class CodeFocusHandler extends AbstractHandler {
 		for (int i=0; i<monitors.length; i++) {
 		    if (monitors[i].getBounds().intersects(windowBounds)) {
 		        displayBounds = monitors[i].getBounds();
+		        break;
 		    }
 		}
 		dw.setX(displayBounds.x);
