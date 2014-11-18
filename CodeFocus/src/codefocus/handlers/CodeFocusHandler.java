@@ -8,7 +8,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -16,18 +15,18 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Our sample handler extends AbstractHandler, an IHandler base class.
+ * CodeFocus handler - see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=427999
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
@@ -64,7 +63,7 @@ public class CodeFocusHandler extends AbstractHandler {
 		curPersp = ms.getActivePerspective(winModel);
 		String childId = curPersp.getChildren().get(0).getElementId();
 		if (childId == null || !childId.equals("CFPlaceholder")) {
-			enableCoseFocus();
+			enableCodeFocus();
 		} else {
 			disableCodeFocus();
 		}
@@ -80,7 +79,7 @@ public class CodeFocusHandler extends AbstractHandler {
 		}
 	}
 
-	private void enableCoseFocus() {
+	private void enableCodeFocus() {
 		ps.activate(null);
 		
 		MTrimmedWindow dw = ms.createModelElement(MTrimmedWindow.class);
@@ -90,11 +89,18 @@ public class CodeFocusHandler extends AbstractHandler {
 		
 		// Explicitly set the window's bounds
 		Rectangle displayBounds = window.getShell().getDisplay().getClientArea();
+		// Multiple monitors -> determine which monitor we're displaying on
+		Monitor[] monitors = window.getShell().getDisplay().getMonitors();
+		Rectangle windowBounds = window.getShell().getBounds();
+		for (int i=0; i<monitors.length; i++) {
+		    if (monitors[i].getBounds().intersects(windowBounds)) {
+		        displayBounds = monitors[i].getBounds();
+		    }
+		}
 		dw.setX(displayBounds.x);
 		dw.setY(displayBounds.y);
 		dw.setWidth(displayBounds.width);
 		dw.setHeight(displayBounds.height);
-
 		MUIElement perspRoot = curPersp.getChildren().get(0);
 		MPartSashContainer psc = ms.createModelElement(MPartSashContainer.class);
 		psc.setElementId("CFPlaceholder");
@@ -118,7 +124,6 @@ public class CodeFocusHandler extends AbstractHandler {
 				continue;
 			IEclipseContext ec = context.getContext();
 			if (ec.getParent() == from) {
-				//System.out.println("TC: " + ((MUIElement)context).getElementId());
 				ec.setParent(to);
 			}
 		}
