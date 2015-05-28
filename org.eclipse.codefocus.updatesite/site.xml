@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.codefocus.feature_1.0.0.201505281142.jar" id="org.eclipse.codefocus.feature" version="1.0.0.201505281142">
+      <category name="org.eclipse.codefocus"/>
+   </feature>
+   <category-def name="org.eclipse.codefocus" label="Code Focus">
+      <description>
+         Eclipse 4 code focus
+      </description>
+   </category-def>
+</site>
