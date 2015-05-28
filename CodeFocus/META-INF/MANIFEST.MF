@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CodeFocus
-Bundle-SymbolicName: CodeFocus;singleton:=true
+Bundle-SymbolicName: org.eclipse.codefocus;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: codefocus.Activator
 Require-Bundle: org.eclipse.ui,
